@@ -2,6 +2,7 @@ package com.nnk.springboot;
 
 import com.nnk.springboot.domain.Trade;
 import com.nnk.springboot.repositories.TradeRepository;
+import org.assertj.core.api.Assertions;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,19 +27,21 @@ public class TradeTests {
 		// Save
 		trade = tradeRepository.save(trade);
 		Assert.assertNotNull(trade.getTradeId());
-		Assert.assertTrue(trade.getAccount().equals("Trade Account"));
+		//Assert.assertTrue(trade.getAccount().equals("Trade Account"));
+		Assertions.assertThat(trade.getAccount()).isEqualTo("Trade Account");
 
 		// Update
 		trade.setAccount("Trade Account Update");
 		trade = tradeRepository.save(trade);
-		Assert.assertTrue(trade.getAccount().equals("Trade Account Update"));
+		Assertions.assertThat(trade.getAccount()).isEqualTo("Trade Account Update");
+		//Assert.assertTrue(trade.getAccount().equals("Trade Account Update"));
 
 		// Find
 		List<Trade> listResult = tradeRepository.findAll();
 		Assert.assertTrue(listResult.size() > 0);
 
 		// Delete
-		Integer id = trade.getTradeId();
+		Long id = trade.getTradeId();
 		tradeRepository.delete(trade);
 		Optional<Trade> tradeList = tradeRepository.findById(id);
 		Assert.assertFalse(tradeList.isPresent());

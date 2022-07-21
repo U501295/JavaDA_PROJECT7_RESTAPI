@@ -2,6 +2,7 @@ package com.nnk.springboot;
 
 import com.nnk.springboot.domain.CurvePoint;
 import com.nnk.springboot.repositories.CurvePointRepository;
+import org.assertj.core.api.Assertions;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,27 +22,29 @@ public class CurvePointTests {
 
 	@Test
 	public void curvePointTest() {
-		CurvePoint curvePoint = new CurvePoint(10, 10d, 30d);
+		CurvePoint curvePoint = new CurvePoint(1l, 10d, 30d);
 
 		// Save
 		curvePoint = curvePointRepository.save(curvePoint);
-		Assert.assertNotNull(curvePoint.getId());
-		Assert.assertTrue(curvePoint.getCurveId() == 10);
+		Assertions.assertThat(curvePoint.getIdCurve()).isNotNull();
+		Assertions.assertThat(curvePoint.getIdCurve()).isEqualTo(1L);
 
 		// Update
-		curvePoint.setCurveId(20);
+		curvePoint.setIdCurve(20l);
 		curvePoint = curvePointRepository.save(curvePoint);
-		Assert.assertTrue(curvePoint.getCurveId() == 20);
+		Assertions.assertThat(curvePoint.getIdCurve()).isEqualTo(20L);
 
 		// Find
 		List<CurvePoint> listResult = curvePointRepository.findAll();
-		Assert.assertTrue(listResult.size() > 0);
+		Assertions.assertThat(listResult.size()).isGreaterThan(0);
+		//Assert.assertTrue(listResult.size() > 0);
 
 		// Delete
-		Integer id = curvePoint.getId();
+		Long id = curvePoint.getCurveId();
 		curvePointRepository.delete(curvePoint);
 		Optional<CurvePoint> curvePointList = curvePointRepository.findById(id);
-		Assert.assertFalse(curvePointList.isPresent());
+		Assertions.assertThat(curvePointList.isPresent()).isFalse();
+		//Assert.assertFalse(curvePointList.isPresent());
 	}
 
 }

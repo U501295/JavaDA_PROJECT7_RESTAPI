@@ -2,24 +2,20 @@ package com.nnk.springboot.domain;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Required;
 
 import javax.persistence.*;
-import javax.validation.constraints.Digits;
-import javax.validation.constraints.NotBlank;
-import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Date;
 
 @Entity
-@Table(name = "bidlist")
+@Table(name = "bid_list")
 @Getter
 @Setter
 public class BidList {
-    // TODO: Map columns in data table BIDLIST with corresponding java fields
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "BidListId")
-    private Long bidListId;
+    @Column(name = "bid_list_id")
+    private Long BidListId;
 
     @Column(nullable = false, name = "account")
     private String account;
@@ -27,10 +23,10 @@ public class BidList {
     @Column(nullable = false, name = "type")
     private String type;
 
-    @Column(nullable = false, name = "bidQuantity")
+    @Column(nullable = false, name = "bid_quantity")
     private double bidQuantity;
 
-    @Column(nullable = false, name = "askQuantity")
+    @Column(nullable = false, name = "ask_quantity")
     private double askQuantity;
 
     @Column(nullable = false, name = "bid")
@@ -42,7 +38,7 @@ public class BidList {
     @Column(nullable = false, name = "benchmark")
     private String benchmark;
 
-    @Column(nullable = false, name = "bidListDate")
+    @Column(nullable = false, name = "bid_list_date")
     @Temporal(TemporalType.DATE)
     private Date bidListDate;
 
@@ -61,30 +57,62 @@ public class BidList {
     @Column(nullable = false, name = "book")
     private String book;
 
-    @Column(nullable = false, name = "creationName")
+    @Column(nullable = false, name = "creation_name")
     private String creationName;
 
-    @Column(nullable = false, name = "creationDate")
+    @Column(nullable = false, name = "creation_date")
     @Temporal(TemporalType.DATE)
     private Date creationDate;
 
-    @Column(nullable = false, name = "revisionName")
+    @Column(nullable = false, name = "revision_name")
     private String revisionName;
 
-    @Column(nullable = false, name = "revisionDate")
+    @Column(nullable = false, name = "revision_date")
     @Temporal(TemporalType.DATE)
     private Date revisionDate;
 
-    @Column(nullable = false, name = "dealName")
+    @Column(nullable = false, name = "deal_name")
     private String dealName;
 
-    @Column(nullable = false, name = "dealType")
+    @Column(nullable = false, name = "deal_type")
     private String dealType;
 
-    @Column(nullable = false, name = "sourceListId")
+    @Column(nullable = false, name = "source_list_id")
     private String sourceListId;
 
     @Column(nullable = false, name = "side")
-    private String  side;
+    private String side;
 
+
+
+    public BidList() {
+
+    }
+
+    public BidList(double bidQuantity) {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, 1);
+        Date date = cal.getTime();
+        this.account = "defaultValue";
+        this.type = "defaultValue";
+        this.bidQuantity = bidQuantity;
+        this.askQuantity = 20d;
+        this.bid = 30d;
+        this.ask = 40d;
+        this.benchmark = "defaultValue";
+        this.bidListDate = date;
+        this.commentary = "defaultValue";
+        this.security = "defaultValue";
+        this.status = "defaultValue";
+        this.trader = "defaultValue";
+        this.book = "defaultValue";
+        this.creationName = "defaultValue";
+        this.creationDate = date;
+        this.revisionName = "defaultValue";
+        this.revisionDate = date;
+        this.dealName = "defaultValue";
+        this.dealType = "defaultValue";
+        this.sourceListId = "defaultValue";
+        this.side = "defaultValue";
+    }
 }

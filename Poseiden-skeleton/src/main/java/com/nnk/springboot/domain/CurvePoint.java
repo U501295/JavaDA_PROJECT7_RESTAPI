@@ -8,21 +8,25 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Date;
 
 
 @Entity
-@Table(name = "curvepoint")
+@Table(name = "curve_point")
 @Getter
 @Setter
 public class CurvePoint {
-    // TODO: Map columns in data table CURVEPOINT with corresponding java fields
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "Id")
+    @Column(name = "curve_point_id")
     private Long curveId;
 
-    @Column(nullable = false, name = "asOfDate")
+    @Column(nullable = false, name = "curve_id")
+    private Long idCurve;
+
+    @Column(nullable = false, name = "asof_date")
     @Temporal(TemporalType.DATE)
     private Date asOfDate;
 
@@ -32,7 +36,24 @@ public class CurvePoint {
     @Column(nullable = false, name = "value")
     private double value;
 
-    @Column(nullable = false, name = "creationDate")
+    @Column(nullable = false, name = "creation_date")
     @Temporal(TemporalType.DATE)
     private Date creationDate;
+
+
+
+    public CurvePoint() {
+
+    }
+
+    public CurvePoint(Long idCurve, double term, double value) {
+        this.idCurve = idCurve;
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, 1);
+        Date date = cal.getTime();
+        this.asOfDate = date;
+        this.term = term;
+        this.value = value;
+        this.creationDate = date;
+    }
 }

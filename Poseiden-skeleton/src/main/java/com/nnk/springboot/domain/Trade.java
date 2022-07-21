@@ -14,10 +14,9 @@ import java.util.Date;
 @Getter
 @Setter
 public class Trade {
-    // TODO: Map columns in data table TRADE with corresponding java fields
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "TradeId")
+    @Column(name = "trade_id")
     private Long tradeId;
 
     @Column(nullable = false, name = "account")
@@ -26,19 +25,19 @@ public class Trade {
     @Column(nullable = false, name = "type")
     private String type;
 
-    @Column(nullable = false, name = "buyQuantity")
+    @Column(nullable = false, name = "buy_quantity")
     private double buyQuantity;
 
-    @Column(nullable = false, name = "sellQuantity")
+    @Column(nullable = false, name = "sell_quantity")
     private double sellQuantity;
 
-    @Column(nullable = false, name = "buyPrice")
+    @Column(nullable = false, name = "buy_price")
     private double buyPrice;
 
-    @Column(nullable = false, name = "sellPrice")
+    @Column(nullable = false, name = "sell_price")
     private double sellPrice;
 
-    @Column(nullable = false, name = "tradeDate")
+    @Column(nullable = false, name = "trade_date")
     @Temporal(TemporalType.DATE)
     private Date tradeDate;
 
@@ -54,30 +53,40 @@ public class Trade {
     @Column(nullable = false, name = "book")
     private String book;
 
-    @Column(nullable = false, name = "creationName")
+    @Column(nullable = false, name = "creation_name")
     private String creationName;
 
-    @Column(nullable = false, name = "creationDate")
+    @Column(nullable = false, name = "creation_date")
     @Temporal(TemporalType.DATE)
     private Date creationDate;
 
-    @Column(nullable = false, name = "revisionName")
+    @Column(nullable = false, name = "revision_name")
     private String revisionName;
 
-    @Column(nullable = false, name = "revisionDate")
+    @Column(nullable = false, name = "revision_date")
     @Temporal(TemporalType.DATE)
     private Date revisionDate;
 
-    @Column(nullable = false, name = "dealName")
+    @Column(nullable = false, name = "deal_name")
     private String dealName;
 
-    @Column(nullable = false, name = "dealType")
+    @Column(nullable = false, name = "deal_type")
     private String dealType;
 
-    @Column(nullable = false, name = "sourceListId")
+    @Column(nullable = false, name = "source_list_id")
     private String sourceListId;
 
     @Column(nullable = false, name = "side")
-    private String  side;
+    private String side;
 
+
+
+    public Trade() {
+
+    }
+
+    public Trade(String account, String type) {
+        this.account = account;
+        this.type = type;
+    }
 }

@@ -8,14 +8,13 @@ import javax.validation.constraints.NotBlank;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "rulename")
+@Table(name = "rule_name")
 @Getter
 @Setter
 public class RuleName {
-    // TODO: Map columns in data table RULENAME with corresponding java fields
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "Id")
+    @Column(name = "rule_name_id")
     private Long ruleNameId;
 
     @Column(nullable = false, name = "name")
@@ -30,10 +29,23 @@ public class RuleName {
     @Column(nullable = false, name = "template")
     private String template;
 
-    @Column(nullable = false, name = "sqlStr")
+    @Column(nullable = false, name = "sql_str")
     private String sqlStr;
 
-    @Column(nullable = false, name = "sqlPart")
+    @Column(nullable = false, name = "sql_part")
     private String sqlPart;
 
+
+    public RuleName() {
+
+    }
+
+    public RuleName(String name, String description, String json, String template, String sqlStr, String sqlPart) {
+        this.name = name;
+        this.description = description;
+        this.json = json;
+        this.template = template;
+        this.sqlStr = sqlStr;
+        this.sqlPart = sqlPart;
+    }
 }

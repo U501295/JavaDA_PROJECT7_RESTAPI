@@ -13,22 +13,33 @@ import java.sql.Timestamp;
 @Getter
 @Setter
 public class Rating {
-    // TODO: Map columns in data table RATING with corresponding java fields
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "Id")
+    @Column(name = "rating_id")
     private Long ratingId;
 
-    @Column(nullable = false, name = "moodysRating")
+    @Column(nullable = false, name = "moodys_rating")
     private String moodysRating;
 
-    @Column(nullable = false, name = "sandPRating")
+    @Column(nullable = false, name = "sand_p_rating")
     private String sandPRating;
 
-    @Column(nullable = false, name = "fitchRating")
+    @Column(nullable = false, name = "fitch_rating")
     private String fitchRating;
 
-    @Column(nullable = false, name = "orderNumber")
+    @Column(nullable = false, name = "order_number")
     private int orderNumber;
 
+
+
+    public Rating() {
+
+    }
+
+    public Rating(String moodysRating, String sandPRating, String fitchRating, int orderNumber) {
+        this.moodysRating = moodysRating;
+        this.sandPRating = sandPRating;
+        this.fitchRating = fitchRating;
+        this.orderNumber = orderNumber;
+    }
 }

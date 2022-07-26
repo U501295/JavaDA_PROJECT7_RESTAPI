@@ -4,6 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -17,12 +20,18 @@ public class BidList {
     @Column(name = "bid_list_id")
     private Long BidListId;
 
+    @NotBlank(message = "account is mandatory")
     @Column(nullable = false, name = "account")
     private String account;
 
+    @NotBlank(message = "type is mandatory")
     @Column(nullable = false, name = "type")
     private String type;
 
+    //@NotBlank(message = "Bid Quantity is mandatory")
+    @PositiveOrZero
+    //TODO : regarder digits
+    //@Digits(int)
     @Column(nullable = false, name = "bid_quantity")
     private double bidQuantity;
 
@@ -84,17 +93,16 @@ public class BidList {
     private String side;
 
 
-
     public BidList() {
 
     }
 
-    public BidList(double bidQuantity) {
+    public BidList(String account, String type, double bidQuantity) {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, 1);
         Date date = cal.getTime();
-        this.account = "defaultValue";
-        this.type = "defaultValue";
+        this.account = account;
+        this.type = type;
         this.bidQuantity = bidQuantity;
         this.askQuantity = 20d;
         this.bid = 30d;

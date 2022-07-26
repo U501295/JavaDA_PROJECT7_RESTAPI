@@ -35,8 +35,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/admin").hasRole("ADMIN")
-                .antMatchers("/user").hasRole("USER")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
@@ -51,9 +49,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .dataSource(dataSource)
                 .passwordEncoder(passwordEncoder())
                 .usersByUsernameQuery(
-                        "select email,pass_word, enabled from users where email=?")
+                        "select username,password,'true' as enabled from users where username=?")
                 .authoritiesByUsernameQuery(
-                        "select email,authority from authorities JOIN users ON users.authority_id = authorities.authority_id where email=?");
+                        "select username,role from users where username=?");
 
 
     }

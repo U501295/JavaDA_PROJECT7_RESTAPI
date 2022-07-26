@@ -80,13 +80,13 @@ public class Trade {
     private String side;
 
 
-
     public Trade() {
 
     }
 
-    public Trade(String account, String type) {
+    public Trade(String account, String type, double buyQuantity) {
         this.account = account;
         this.type = type;
+        this.buyQuantity = buyQuantity;
     }
 }

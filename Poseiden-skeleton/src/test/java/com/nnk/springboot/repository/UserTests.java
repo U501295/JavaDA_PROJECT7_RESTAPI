@@ -1,4 +1,4 @@
-package com.nnk.springboot;
+package com.nnk.springboot.repository;
 
 import com.nnk.springboot.domain.Trade;
 import com.nnk.springboot.domain.User;
@@ -24,7 +24,7 @@ public class UserTests {
     @Test
     public void userTest() {
 
-        User user = new User("username","password", "fullname", "role");
+        User user = new User("username", "password", "fullname", "role");
 
         // Save
         user = userRepository.save(user);

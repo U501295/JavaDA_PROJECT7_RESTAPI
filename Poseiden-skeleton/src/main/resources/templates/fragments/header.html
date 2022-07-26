@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Header</title>
+</head>
+<body>
+<div class="container-fluid p-3 d-flex justify-content-between" th:fragment="header">
+    <div class="row">
+        <div class="col-6">
+            <a href="/bidList/list">Bid List</a>&nbsp;|&nbsp;
+            <a href="/curvePoint/list">Curve Points</a>&nbsp;|&nbsp;
+            <a href="/rating/list">Ratings</a>&nbsp;|&nbsp;
+            <a href="/trade/list">Trade</a>&nbsp;|&nbsp;
+            <a href="/ruleName/list">Rule</a>
+        </div>
+        <div class="col-6 text-right">
+            Logged in user: <b class="user" th:inline="text"> [[${#httpServletRequest.remoteUser}]] </b>
+        </div>
+
+        <form method="post" name="logoutForm" th:action="@{/logout}">
+            <input type="submit" value="Logout"/>
+        </form>
+    </div>
+
+</div>
+
+</body>
+</html>

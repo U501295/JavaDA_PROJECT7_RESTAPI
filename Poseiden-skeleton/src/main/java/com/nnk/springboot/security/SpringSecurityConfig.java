@@ -34,12 +34,20 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http
+                .csrf()
+                .ignoringAntMatchers("/api/**")
+                .and()
                 .authorizeRequests()
+                .antMatchers("/api/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
+                .defaultSuccessUrl("/home")
+                .and()
+                .logout().logoutSuccessUrl("/login").permitAll()
                 .and()
                 .oauth2Login();
+
     }
 
     @Override

@@ -7,23 +7,8 @@
     <link href="../../css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
+<div th:replace="fragments/header :: header"></div>
 <div class="container">
-    <div class="row">
-        <div class="col-6">
-            <a href="/bidList/list">Bid List</a>&nbsp;|&nbsp;
-            <a href="/curvePoint/list">Curve Points</a>&nbsp;|&nbsp;
-            <a href="/rating/list">Ratings</a>&nbsp;|&nbsp;
-            <a href="/trade/list">Trade</a>&nbsp;|&nbsp;
-            <a href="/ruleName/list">Rule</a>
-        </div>
-        <div class="col-6 text-right">
-            Logged in user: <b class="user" th:inline="text"> [[${#httpServletRequest.remoteUser}]] </b>
-        </div>
-
-        <form method="post" name="logoutForm" th:action="@{/logout}">
-            <input type="submit" value="Logout"/>
-        </form>
-    </div>
     <div class="row"><h2>Bid List</h2></div>
     <div class="row">
         <a class="btn btn-primary btn-sm" href="/bidList/add">Add New</a>

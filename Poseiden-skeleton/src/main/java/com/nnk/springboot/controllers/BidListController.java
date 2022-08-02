@@ -31,11 +31,7 @@ public class BidListController {
     }
 
     @PostMapping("/bidList/validate")
-    //TODO : voir si ça crée pas deux objets à la place d'un seul
-    public String validate(@Valid BidList bid, BindingResult result, Model model)
-        // check data valid and save to db, after saving return bid list
-    /*public String validate(@RequestParam("account") String account, @RequestParam("type") String type,
-                           @RequestParam("bidQuantity") double bidQuantity, Model model)*/ {
+    public String validate(@Valid BidList bid, BindingResult result, Model model) {
         if (!result.hasErrors()) {
             //BidList newBid = new BidList(bid.getAccount(), bid.getType(), bid.getBidQuantity());
             bidListService.saveBid(bid);

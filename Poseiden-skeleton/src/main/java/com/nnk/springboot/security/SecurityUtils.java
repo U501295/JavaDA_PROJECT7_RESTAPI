@@ -20,7 +20,7 @@ public final class SecurityUtils {
     }
 
 
-    public static String getUserMail() {
+    public static String getUserName() {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         String userName = null;
@@ -30,22 +30,7 @@ public final class SecurityUtils {
             userName = userDetails.getUsername();
 
         }
-        log.debug("Negative Balance exception trigerred");
         return userName;
     }
 
-    public static boolean isUserConnected() {
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        Authentication authentication = securityContext.getAuthentication();
-        String authority = authentication.getAuthorities().toString();
-        if (authority.equals("[ROLE_ANONYMOUS]")) {
-            log.debug("No connected user recognized");
-            return false;
-
-        } else {
-            log.debug("Recognized connected user");
-            return true;
-        }
-
-    }
 }

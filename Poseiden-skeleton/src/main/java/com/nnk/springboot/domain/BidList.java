@@ -2,11 +2,10 @@ package com.nnk.springboot.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
-import javax.validation.constraints.Digits;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.*;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -28,21 +27,19 @@ public class BidList {
     @Column(nullable = false, name = "type")
     private String type;
 
-    //@NotBlank(message = "Bid Quantity is mandatory")
     @PositiveOrZero
-    //TODO : regarder digits
-    //@Digits(int)
+    @NotNull(message = "bidQuantity may not be empty")
     @Column(nullable = false, name = "bid_quantity")
-    private double bidQuantity;
+    private Double bidQuantity;
 
     @Column(nullable = false, name = "ask_quantity")
-    private double askQuantity;
+    private Double askQuantity;
 
     @Column(nullable = false, name = "bid")
-    private double bid;
+    private Double bid;
 
     @Column(nullable = false, name = "ask")
-    private double ask;
+    private Double ask;
 
     @Column(nullable = false, name = "benchmark")
     private String benchmark;
@@ -97,7 +94,7 @@ public class BidList {
 
     }
 
-    public BidList(String account, String type, double bidQuantity) {
+    public BidList(String account, String type, Double bidQuantity) {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, 1);
         Date date = cal.getTime();

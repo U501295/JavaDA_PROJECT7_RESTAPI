@@ -7,6 +7,7 @@
     <link href="../../css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
+<div th:replace="fragments/header :: header"></div>
 <div class="container">
     <div class="row">
         <h2>Update CurvePoint</h2>
@@ -22,7 +23,8 @@
             <div class="form-group">
                 <label class="col-sm-2 control-label" for="idCurve">idCurve</label>
                 <div class="col-sm-10">
-                    <input class="col-4" id="idCurve" placeholder="idCurve" th:field="*{idCurve}" type="text">
+                    <input class="col-4" id="idCurve" min="0.0" placeholder="idCurve" required step="0.01"
+                           th:field="*{idCurve}" type="number">
                     <p class="text-danger" th:errors="*{idCurve}" th:if="${#fields.hasErrors('idCurve')}"></p>
                 </div>
             </div>
@@ -30,7 +32,7 @@
             <div class="form-group">
                 <label class="col-sm-2 control-label" for="term">term</label>
                 <div class="col-sm-10">
-                    <input class="col-4" id="term" min="0.0" placeholder="term" step="0.01" th:field="*{term}"
+                    <input class="col-4" id="term" min="0.0" placeholder="term" required step="0.01" th:field="*{term}"
                            type="number">
                     <p class="text-danger" th:errors="*{term}" th:if="${#fields.hasErrors('term')}"></p>
                 </div>
@@ -39,7 +41,8 @@
             <div class="form-group">
                 <label class="col-sm-2 control-label" for="value">value</label>
                 <div class="col-sm-10">
-                    <input class="col-4" id="value" min="0.0" placeholder="value" step="0.01" th:field="*{value}"
+                    <input class="col-4" id="value" min="0.0" placeholder="value" required step="0.01"
+                           th:field="*{value}"
                            type="number">
                     <p class="text-danger" th:errors="*{value}" th:if="${#fields.hasErrors('value')}"></p>
                 </div>

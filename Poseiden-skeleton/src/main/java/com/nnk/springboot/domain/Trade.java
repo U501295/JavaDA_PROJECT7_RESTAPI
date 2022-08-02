@@ -5,6 +5,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -19,23 +21,27 @@ public class Trade {
     @Column(name = "trade_id")
     private Long tradeId;
 
+    @NotBlank(message = "Account is mandatory")
     @Column(nullable = false, name = "account")
     private String account;
 
+    @NotBlank(message = "Type is mandatory")
     @Column(nullable = false, name = "type")
     private String type;
 
+    @PositiveOrZero
+    @NotNull(message = "buy_quantity may not be empty")
     @Column(nullable = false, name = "buy_quantity")
-    private double buyQuantity;
+    private Double buyQuantity;
 
     @Column(nullable = false, name = "sell_quantity")
-    private double sellQuantity;
+    private Double sellQuantity;
 
     @Column(nullable = false, name = "buy_price")
-    private double buyPrice;
+    private Double buyPrice;
 
     @Column(nullable = false, name = "sell_price")
-    private double sellPrice;
+    private Double sellPrice;
 
     @Column(nullable = false, name = "trade_date")
     @Temporal(TemporalType.DATE)
@@ -84,7 +90,7 @@ public class Trade {
 
     }
 
-    public Trade(String account, String type, double buyQuantity) {
+    public Trade(String account, String type, Double buyQuantity) {
         this.account = account;
         this.type = type;
         this.buyQuantity = buyQuantity;

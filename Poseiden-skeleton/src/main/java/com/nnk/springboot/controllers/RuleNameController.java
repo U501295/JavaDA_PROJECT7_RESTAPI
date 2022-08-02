@@ -35,7 +35,6 @@ public class RuleNameController {
     }
 
     @PostMapping("/ruleName/validate")
-    //TODO : voir si ça crée pas deux objets à la place d'un seul
     public String validate(@Valid RuleName ruleName, BindingResult result, Model model)
         // check data valid and save to db, after saving return ruleName list
     /*public String validate(@RequestParam("account") String account, @RequestParam("type") String type,

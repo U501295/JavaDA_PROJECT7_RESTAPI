@@ -56,9 +56,9 @@ public class CurveController {
     public String updateRating(@PathVariable("id") Long id, @Valid CurvePoint curvePoint,
                                BindingResult result, Model model) {
         //  check required fields, if valid call service to update Curve and return Curve list
-        if (result.hasErrors()) {
+        /*if (result.hasErrors()) {
             return "redirect:curvePoint/list";
-        }
+        }*/
         curvePoint.setCurveId(id);
         curvePointService.saveCurvePoint(curvePoint);
         model.addAttribute("curvePoints", curvePointService.findAllCurvePoints());

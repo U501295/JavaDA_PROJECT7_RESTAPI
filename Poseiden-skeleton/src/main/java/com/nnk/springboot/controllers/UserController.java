@@ -2,6 +2,7 @@ package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.User;
 import com.nnk.springboot.repositories.UserRepository;
+import com.nnk.springboot.security.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -23,6 +24,7 @@ public class UserController {
     @RequestMapping("/user/list")
     public String home(Model model) {
         model.addAttribute("users", userRepository.findAll());
+        model.addAttribute("sec", SecurityUtils.isAdminConnected());
         return "user/list";
     }
 
@@ -55,7 +57,7 @@ public class UserController {
     public String updateUser(@PathVariable("id") Long id, @Valid User user,
                              BindingResult result, Model model) {
         if (result.hasErrors()) {
-            return "user/update";
+            return "redirect:/user/list";
         }
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -63,9 +65,10 @@ public class UserController {
         user.setId(id);
         userRepository.save(user);
         model.addAttribute("users", userRepository.findAll());
+
         return "redirect:/user/list";
     }
-    
+
     @GetMapping("/user/delete/{id}")
     public String deleteUser(@PathVariable("id") Long id, Model model) {
         User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));

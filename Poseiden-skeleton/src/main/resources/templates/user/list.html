@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8"/>
     <title>Home</title>
@@ -13,7 +13,8 @@
     </div>
     <div class="row"><h2>User List</h2></div>
     <div class="row">
-        <a class="btn btn-primary btn-sm" href="/user/add">Add New</a>
+        <p></p>
+        <a class="btn btn-primary btn-sm" href="/user/add" th:if="${sec}">Add New</a>
         <table class="table table-bordered">
             <thead>
             <tr>
@@ -31,8 +32,10 @@
                 <td th:text="${user.username}"></td>
                 <td style="width: 25%" th:text="${user.role}"></td>
                 <td class="text-center" style="width: 15%">
-                    <a th:href="@{/user/update/{id}(id=${user.id})}">Edit</a>&nbsp;|&nbsp;
-                    <a th:href="@{/user/delete/{id}(id=${user.id})}">Delete</a>
+                    <a th:href="@{/user/update/{id}(id=${user.id})}" th:if="${sec}">Edit</a>
+                    <a th:if="${sec}">|</a>&nbsp;&nbsp;
+                    <a th:href="@{/user/delete/{id}(id=${user.id})}" th:if="${sec}">Delete</a>
+                    <a th:if="${!sec}">Vous ne disposez pas des droits en écriture</a>
                 </td>
             </tr>
             </tbody>

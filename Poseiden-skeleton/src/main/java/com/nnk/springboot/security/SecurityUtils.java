@@ -33,4 +33,17 @@ public final class SecurityUtils {
         return userName;
     }
 
+    public static boolean isAdminConnected() {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        String authority = authentication.getAuthorities().toString();
+        if (authority.contains("ADMIN")) {
+            return true;
+
+        } else {
+            return false;
+        }
+
+    }
+
 }

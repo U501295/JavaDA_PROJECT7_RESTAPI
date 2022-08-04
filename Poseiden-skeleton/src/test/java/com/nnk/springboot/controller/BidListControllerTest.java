@@ -1,6 +1,7 @@
 package com.nnk.springboot.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nnk.springboot.TestFunctions;
 import com.nnk.springboot.controllers.BidListController;
 import com.nnk.springboot.domain.BidList;
 import com.nnk.springboot.services.BidListService;
@@ -36,7 +37,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-//@SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
 @WebMvcTest(controllers = BidListController.class)
 public class BidListControllerTest extends TestCase {
@@ -49,16 +49,6 @@ public class BidListControllerTest extends TestCase {
 
     private BidList bidList;
 
-    public static String asJsonString(final Object obj) {
-        try {
-            final ObjectMapper mapper = new ObjectMapper();
-            final String jsonContent = mapper.writeValueAsString(obj);
-            return jsonContent;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     @Before
     public void setup() {
         bidList = new BidList();
@@ -70,8 +60,8 @@ public class BidListControllerTest extends TestCase {
         //when(bidListService.findAllBids()).thenReturn(new ArrayList<>());
         try {
             mockMvc.perform(
-                            get("http://localhost:8080//bidList/list"))
-                    //.andDo(print())
+                            get("http://localhost:8080/bidList/list"))
+                    .andDo(print())
                     .andExpect(status().isOk());
         } catch (Exception e) {
 
@@ -84,7 +74,7 @@ public class BidListControllerTest extends TestCase {
 
         try {
             mockMvc.perform(
-                            get("http://localhost:8080//bidList/add"))
+                            get("http:/localhost:8080/bidList/add"))
                     //.andDo(print())
                     .andExpect(status().isOk());
         } catch (Exception e) {
@@ -95,7 +85,7 @@ public class BidListControllerTest extends TestCase {
 
     @Test
     public void validateBidList() {
-        String json = asJsonString(bidList);
+        String json = TestFunctions.asJsonString(bidList);
         //when(bidListService.saveBid(any(BidList.class))).thenReturn(any(BidList.class));
         try {
             mockMvc.perform(
@@ -109,6 +99,22 @@ public class BidListControllerTest extends TestCase {
         } catch (Exception e) {
 
         }
+
+    }
+
+    @Test
+    public void validateErrorBidList() throws Exception {
+        String json = TestFunctions.asJsonString(null);
+        when(bidListService.saveBid(any(BidList.class))).thenThrow(RuntimeException.class);
+        mockMvc.perform(
+                post("http://localhost:8080/bidList/validate")
+                        .content(json)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+
+
+        ).andExpect(status().isOk()).andDo(print());
+
 
     }
 

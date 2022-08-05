@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class RatingTests {
+public class RatingIT {
 
     @Autowired
     private RatingRepository ratingRepository;

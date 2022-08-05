@@ -25,5 +25,6 @@ public class PasswordEncodeTest {
     public void testPassword() {
         String pw = passwordEncoder.encode("admin");
         System.out.println("[ " + pw + " ]");
+        
     }
 }

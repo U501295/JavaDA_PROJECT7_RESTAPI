@@ -16,7 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Collections;
 
-import static org.hamcrest.Matchers.containsString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -40,17 +40,16 @@ public class UserControllerTest {
 
     @Test
     @WithMockUser
-    public void testUserListList() throws Exception {
+    public void testUserList() throws Exception {
         when(userService.findAllUsers()).thenReturn(Collections.singletonList(user));
         mockMvc.perform(get("/user/list").with(csrf().asHeader()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("user/list"))
-                .andExpect(model().attributeExists("userlist"))
-                .andExpect(content().string(containsString(String.valueOf(user.getUsername()))));
+                .andExpect(model().attributeExists("users"));
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(username = "admin", authorities = {"ADMIN"})
     public void addUserList() throws Exception {
         mockMvc.perform(
                         get("/user/add")
@@ -62,8 +61,9 @@ public class UserControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(username = "admin", authorities = {"ADMIN"})
     void testValidate() throws Exception {
+        when(userService.saveUser(any(User.class))).thenReturn(user);
         mockMvc.perform(post("/user/validate").with(csrf().asHeader())
                         .param("username", "name")
                         .param("password", "password")
@@ -90,7 +90,7 @@ public class UserControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(username = "admin", authorities = {"ADMIN"})
     void testValidateHasError() throws Exception {
         mockMvc.perform(post("/user/validate").with(csrf().asHeader())
                         .param("username", "")
@@ -100,15 +100,14 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("user/add"))
                 .andExpect(model().hasErrors())
-                .andExpect(model().attributeHasFieldErrorCode("user", "account", "NotBlank"));
+                .andExpect(model().attributeHasFieldErrorCode("user", "username", "NotBlank"));
     }
 
 
     @Test
-    @WithMockUser
+    @WithMockUser(username = "admin", authorities = {"ADMIN"})
     public void UserListUpdate() throws Exception {
         when(userService.findUserById(anyLong())).thenReturn(user);
-
         mockMvc.perform(get("/user/update/1")
                         .with(csrf()))
                 .andExpect(status().isOk())
@@ -116,10 +115,10 @@ public class UserControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(username = "admin", authorities = {"ADMIN"})
     void testUpdateUser() throws Exception {
         when(userService.saveUser(user)).thenReturn(user);
-        mockMvc.perform(post("/user/update/1").with(csrf().asHeader())
+        mockMvc.perform(post("/user/update/2").with(csrf().asHeader())
                         .param("username", "name")
                         .param("password", "password")
                         .param("fullname", "full")
@@ -131,10 +130,11 @@ public class UserControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(username = "admin", authorities = {"ADMIN"})
         //TODO : regarder plus en détail
     void testUpdateUserHasError() throws Exception {
-        mockMvc.perform(post("/user/update/1")
+        when(userService.saveUser(user)).thenReturn(user);
+        mockMvc.perform(post("/user/update/2")
                         .with(csrf().asHeader())
                         .param("username", "")
                         .param("password", "password")
@@ -145,7 +145,7 @@ public class UserControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(username = "admin", authorities = {"ADMIN"})
     void testDeleteUser() throws Exception {
         when(userService.findUserById(anyLong())).thenReturn(user);
         mockMvc.perform(get("/user/delete/0").with(csrf().asHeader()))

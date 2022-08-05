@@ -1,11 +1,12 @@
-package com.nnk.springboot.TestIT;
+package com.nnk.springboot.tools;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**
  * Created by Khang Nguyen.
@@ -13,8 +14,8 @@ import org.springframework.test.context.junit4.SpringRunner;
  * Date: 09/03/2019
  * Time: 11:26 AM
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest
+@ExtendWith(SpringExtension.class)
 public class PasswordEncodeTest {
 
     @Autowired
@@ -24,7 +25,8 @@ public class PasswordEncodeTest {
     @Test
     public void testPassword() {
         String pw = passwordEncoder.encode("admin");
-        System.out.println("[ " + pw + " ]");
-        
+        //System.out.println("[ " + pw + " ]");
+        Assertions.assertThat(pw).isNotEqualTo("admin");
+
     }
 }

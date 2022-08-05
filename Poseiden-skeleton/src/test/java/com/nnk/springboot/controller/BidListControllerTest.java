@@ -16,14 +16,14 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Collections;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.hamcrest.Matchers.containsString;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 //@RunWith(SpringRunner.class)
 @AutoConfigureMockMvc//(addFilters = false)
@@ -41,64 +41,42 @@ public class BidListControllerTest {
     @Test
     @WithMockUser
     public void testBidListList() throws Exception {
-        mockMvc.perform(get("/bidList/list").with(csrf().asHeader())).andExpect(status().isOk())
-                .andExpect(view().name("bidList/list"));
+        when(bidListService.findAllBids()).thenReturn(Collections.singletonList(bid));
+        mockMvc.perform(get("/bidList/list").with(csrf().asHeader()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("bidList/list"))
+                .andExpect(model().attributeExists("bidlist"))
+                .andExpect(content().string(containsString(String.valueOf(bid.getAccount()))));
     }
 
     @Test
     @WithMockUser
-    public void getBidList() throws Exception {
-
-        when(bidListService.findAllBids()).thenReturn(Collections.singletonList(bid));
-        /*try {
-            mockMvc.perform(
-                            get("http://localhost:8080/bidList/list"))
-                    .andDo(print())
-                    .andExpect(status().isOk());
-        } catch (Exception e) {
-
-        }*/
-        mockMvc.perform(get("/bidList/list")
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(view().name("bidList/list"));
-
-    }
-
-    @Test
     public void addBidList() throws Exception {
-
-
         mockMvc.perform(
-                        get("http:/localhost:8080/bidList/add"))
-                .andDo(print())
-                .andExpect(status().isOk());
+                        get("/bidList/add")
+                                .with(csrf().asHeader()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("bidList/add"))
+                .andDo(print());
 
     }
 
     @Test
-    public void validateBidList() {
+    @WithMockUser
+    void testValidate() throws Exception {
+        mockMvc.perform(post("/bidList/validate").with(csrf().asHeader())
+                        .param("account", "test")
+                        .param("type", "test")
+                        .param("bidQuantity", "10.0"))
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/bidList/list"));
+    }
+
+
+    @Test
+    @WithMockUser
+    public void Error403ValidateBidList() throws Exception {
         String json = TestFunctions.asJsonString(bid);
-        //when(bidListService.saveBid(any(BidList.class))).thenReturn(any(BidList.class));
-        try {
-            mockMvc.perform(
-                    post("http://localhost:8080/bidList/validate")
-                            .content(json)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .accept(MediaType.APPLICATION_JSON)
-
-
-            ).andExpect(status().isOk()).andDo(print());
-        } catch (Exception e) {
-
-        }
-
-    }
-
-    @Test
-    public void validateErrorBidList() throws Exception {
-        String json = TestFunctions.asJsonString(null);
-        when(bidListService.saveBid(any(BidList.class))).thenThrow(RuntimeException.class);
         mockMvc.perform(
                 post("http://localhost:8080/bidList/validate")
                         .content(json)
@@ -106,32 +84,67 @@ public class BidListControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
 
 
-        ).andExpect(status().isOk()).andDo(print());
-
+        ).andExpect(status().isForbidden()).andDo(print());
 
     }
 
-
-
-/*
-    @GetMapping("/bidList/add")
-
-
-    @PostMapping("/bidList/validate")
-
-
-    @GetMapping("/bidList/update/{id}")
-    public String showUpdateForm(@PathVariable("id") Long id, Model model) {
-        // get Bid by Id and to model then show to the form
-        BidList bid = bidListService.findBidById(id);
-        model.addAttribute("bid", bid);
-        return "bidList/update";
+    @Test
+    @WithMockUser
+    void testValidateHasError() throws Exception {
+        mockMvc.perform(post("/bidList/validate").with(csrf().asHeader())
+                        .param("account", "")
+                        .param("type", "test")
+                        .param("bidQuantity", "10.0"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("bidList/add"))
+                .andExpect(model().hasErrors())
+                .andExpect(model().attributeHasFieldErrorCode("bidList", "account", "NotBlank"));
     }
 
-    @PostMapping("/bidList/update/{id}")
 
+    @Test
+    @WithMockUser
+    public void BidListUpdate() throws Exception {
+        when(bidListService.findBidById(anyLong())).thenReturn(bid);
 
-    @GetMapping("/bidList/delete/{id}")*/
+        mockMvc.perform(get("/bidList/update/1")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("bidList/update"));
+    }
 
+    @Test
+    @WithMockUser
+    void testUpdateBid() throws Exception {
+        when(bidListService.saveBid(bid)).thenReturn(bid);
+        mockMvc.perform(post("/bidList/update/1").with(csrf().asHeader()).param("account", "test")
+                        .param("type", "test").param("bidQuantity", "10.0"))
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/bidList/list"))
+                .andExpect(model().hasNoErrors());
+
+    }
+
+    @Test
+    @WithMockUser
+        //TODO : regarder plus en détail
+    void testUpdateBidHasError() throws Exception {
+        mockMvc.perform(post("/bidList/update/1")
+                        .with(csrf().asHeader())
+                        .param("account", "")
+                        .param("type", "test")
+                        .param("bidQuantity", "10.0"))
+                .andExpect(view().name("redirect:/bidList/list"));
+
+    }
+
+    @Test
+    @WithMockUser
+    void testDeleteBid() throws Exception {
+        when(bidListService.findBidById(anyLong())).thenReturn(bid);
+        mockMvc.perform(get("/bidList/delete/0").with(csrf().asHeader()))
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/bidList/list"));
+    }
 
 }

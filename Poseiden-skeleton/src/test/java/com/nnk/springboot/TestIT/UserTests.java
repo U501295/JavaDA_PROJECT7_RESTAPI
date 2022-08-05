@@ -1,6 +1,5 @@
-package com.nnk.springboot.repository;
+package com.nnk.springboot.TestIT;
 
-import com.nnk.springboot.domain.Trade;
 import com.nnk.springboot.domain.User;
 import com.nnk.springboot.repositories.UserRepository;
 import org.assertj.core.api.Assertions;

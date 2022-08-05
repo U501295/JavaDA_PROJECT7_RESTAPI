@@ -1,124 +1,164 @@
 package com.nnk.springboot.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nnk.springboot.controllers.BidListController;
-import com.nnk.springboot.domain.BidList;
-import com.nnk.springboot.services.BidListService;
-import junit.framework.TestCase;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import com.nnk.springboot.domain.RuleName;
+import com.nnk.springboot.helper.TestFunctions;
+import com.nnk.springboot.services.RuleNameService;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Collections;
+
+import static org.hamcrest.Matchers.containsString;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@RunWith(SpringRunner.class)
-//@SpringBootTest
-@AutoConfigureMockMvc(addFilters = false)
-@WebMvcTest(controllers = BidListController.class)
-public class RuleNameControllerTest extends TestCase {
+//@RunWith(SpringRunner.class)
+@AutoConfigureMockMvc//(addFilters = false)
+//@WebMvcTest(controllers = RuleNameController.class)
+@SpringBootTest
+@ExtendWith(SpringExtension.class)
+public class RuleNameControllerTest {
 
+    private final RuleName rule = new RuleName("Rule Name", "Description", "Json", "Template", "SQL", "SQL Part");
     @Autowired
     public MockMvc mockMvc;
-
     @MockBean
-    BidListService bidListService;
+    RuleNameService ruleNameService;
 
-    private BidList bidList;
-
-    public static String asJsonString(final Object obj) {
-        try {
-            final ObjectMapper mapper = new ObjectMapper();
-            final String jsonContent = mapper.writeValueAsString(obj);
-            return jsonContent;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Before
-    public void setup() {
-        bidList = new BidList();
+    @Test
+    @WithMockUser
+    public void testRuleNameList() throws Exception {
+        when(ruleNameService.findAllRuleNames()).thenReturn(Collections.singletonList(rule));
+        mockMvc.perform(get("/ruleName/list").with(csrf().asHeader()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("ruleName/list"))
+                .andExpect(model().attributeExists("ruleNamelist"))
+                .andExpect(content().string(containsString(String.valueOf(rule.getName()))));
     }
 
     @Test
-    public void getBidList() {
-
-        //when(bidListService.findAllBids()).thenReturn(new ArrayList<>());
-        try {
-            mockMvc.perform(
-                            get("http://localhost:8080//bidList/list"))
-                    //.andDo(print())
-                    .andExpect(status().isOk());
-        } catch (Exception e) {
-
-        }
+    @WithMockUser
+    public void addRuleName() throws Exception {
+        mockMvc.perform(
+                        get("/ruleName/add")
+                                .with(csrf().asHeader()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("ruleName/add"))
+                .andDo(print());
 
     }
 
     @Test
-    public void addBidList() {
+    @WithMockUser
+    void testValidate() throws Exception {
+        mockMvc.perform(post("/ruleName/validate").with(csrf().asHeader())
+                        .param("name", "name")
+                        .param("description", "description")
+                        .param("json", "json")
+                        .param("template", "template")
+                        .param("sqlStr", "sqlStr")
+                        .param("sqlPart", "sqlPart"))
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/ruleName/list"));
+    }
 
-        try {
-            mockMvc.perform(
-                            get("http://localhost:8080//bidList/add"))
-                    //.andDo(print())
-                    .andExpect(status().isOk());
-        } catch (Exception e) {
 
-        }
+    @Test
+    @WithMockUser
+    public void Error403ValidateRuleName() throws Exception {
+        String json = TestFunctions.asJsonString(rule);
+        mockMvc.perform(
+                post("http://localhost:8080/ruleName/validate")
+                        .content(json)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+
+
+        ).andExpect(status().isForbidden()).andDo(print());
 
     }
 
     @Test
-    public void validateBidList() {
-        String json = asJsonString(bidList);
-        //when(bidListService.saveBid(any(BidList.class))).thenReturn(any(BidList.class));
-        try {
-            mockMvc.perform(
-                    post("http://localhost:8080/bidList/validate")
-                            .content(json)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .accept(MediaType.APPLICATION_JSON)
-
-
-            ).andExpect(status().isOk()).andDo(print());
-        } catch (Exception e) {
-
-        }
-
+    @WithMockUser
+    void testValidateHasError() throws Exception {
+        mockMvc.perform(post("/ruleName/validate").with(csrf().asHeader())
+                        .param("name", "")
+                        .param("description", "description")
+                        .param("json", "json")
+                        .param("template", "template")
+                        .param("sqlStr", "sqlStr")
+                        .param("sqlPart", "sqlPart"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("ruleName/add"))
+                .andExpect(model().hasErrors())
+                .andExpect(model().attributeHasFieldErrorCode("ruleName", "name", "NotBlank"));
     }
 
 
+    @Test
+    @WithMockUser
+    public void RuleNameUpdate() throws Exception {
+        when(ruleNameService.findRuleNameById(anyLong())).thenReturn(rule);
 
-/*
-    @GetMapping("/bidList/add")
-
-
-    @PostMapping("/bidList/validate")
-
-
-    @GetMapping("/bidList/update/{id}")
-    public String showUpdateForm(@PathVariable("id") Long id, Model model) {
-        // get Bid by Id and to model then show to the form
-        BidList bid = bidListService.findBidById(id);
-        model.addAttribute("bid", bid);
-        return "bidList/update";
+        mockMvc.perform(get("/ruleName/update/1")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("ruleName/update"));
     }
 
-    @PostMapping("/bidList/update/{id}")
+    @Test
+    @WithMockUser
+    void testUpdateRuleName() throws Exception {
+        when(ruleNameService.saveRuleName(rule)).thenReturn(rule);
+        mockMvc.perform(post("/ruleName/update/1").with(csrf().asHeader())
+                        .param("name", "name")
+                        .param("description", "description")
+                        .param("json", "json")
+                        .param("template", "template")
+                        .param("sqlStr", "sqlStr")
+                        .param("sqlPart", "sqlPart"))
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/ruleName/list"))
+                .andExpect(model().hasNoErrors());
 
+    }
 
-    @GetMapping("/bidList/delete/{id}")*/
+    @Test
+    @WithMockUser
+        //TODO : regarder plus en détail
+    void testUpdateRuleNameHasError() throws Exception {
+        mockMvc.perform(post("/ruleName/update/1")
+                        .with(csrf().asHeader())
+                        .param("name", "")
+                        .param("description", "description")
+                        .param("json", "json")
+                        .param("template", "template")
+                        .param("sqlStr", "sqlStr")
+                        .param("sqlPart", "sqlPart"))
+                .andExpect(view().name("redirect:/ruleName/list"));
 
+    }
+
+    @Test
+    @WithMockUser
+    void testDeleteRuleName() throws Exception {
+        when(ruleNameService.findRuleNameById(anyLong())).thenReturn(rule);
+        mockMvc.perform(get("/ruleName/delete/0").with(csrf().asHeader()))
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/ruleName/list"));
+    }
 
 }

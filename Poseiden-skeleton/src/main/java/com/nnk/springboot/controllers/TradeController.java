@@ -1,7 +1,6 @@
 package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.Trade;
-import com.nnk.springboot.domain.Trade;
 import com.nnk.springboot.services.TradeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -61,7 +60,7 @@ public class TradeController {
                               BindingResult result, Model model) {
         // check required fields, if valid call service to update Trade and return list Trade
         if (result.hasErrors()) {
-            return "redirect:trade/list";
+            return "redirect:/trade/list";
         }
         trade.setTradeId(id);
         tradeService.saveTrade(trade);

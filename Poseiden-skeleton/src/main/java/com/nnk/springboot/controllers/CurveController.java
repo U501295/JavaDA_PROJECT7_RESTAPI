@@ -2,7 +2,6 @@ package com.nnk.springboot.controllers;
 
 
 import com.nnk.springboot.domain.CurvePoint;
-import com.nnk.springboot.repositories.UserRepository;
 import com.nnk.springboot.services.CurvePointService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -53,12 +52,12 @@ public class CurveController {
     }
 
     @PostMapping("/curvePoint/update/{id}")
-    public String updateRating(@PathVariable("id") Long id, @Valid CurvePoint curvePoint,
-                               BindingResult result, Model model) {
+    public String updateCurve(@PathVariable("id") Long id, @Valid CurvePoint curvePoint,
+                              BindingResult result, Model model) {
         //  check required fields, if valid call service to update Curve and return Curve list
-        /*if (result.hasErrors()) {
-            return "redirect:curvePoint/list";
-        }*/
+        if (result.hasErrors()) {
+            return "redirect:/curvePoint/list";
+        }
         curvePoint.setCurveId(id);
         curvePointService.saveCurvePoint(curvePoint);
         model.addAttribute("curvePoints", curvePointService.findAllCurvePoints());
@@ -66,7 +65,7 @@ public class CurveController {
     }
 
     @GetMapping("/curvePoint/delete/{id}")
-    public String deleteRating(@PathVariable("id") Long id, Model model) {
+    public String deleteCurve(@PathVariable("id") Long id, Model model) {
         //  Find Curve by Id and delete the Curve, return to Curve list
         CurvePoint curvePointToDelete = curvePointService.findCurvePointById(id);
         curvePointService.deleteCurvePoint(curvePointToDelete.getCurveId());

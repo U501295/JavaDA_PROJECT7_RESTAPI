@@ -1,124 +1,151 @@
 package com.nnk.springboot.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nnk.springboot.controllers.BidListController;
-import com.nnk.springboot.domain.BidList;
-import com.nnk.springboot.services.BidListService;
-import junit.framework.TestCase;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import com.nnk.springboot.domain.CurvePoint;
+import com.nnk.springboot.helper.TestFunctions;
+import com.nnk.springboot.services.CurvePointService;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Collections;
+
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@RunWith(SpringRunner.class)
-//@SpringBootTest
-@AutoConfigureMockMvc(addFilters = false)
-@WebMvcTest(controllers = BidListController.class)
-public class CurvePointControllerTest extends TestCase {
+//@RunWith(SpringRunner.class)
+@AutoConfigureMockMvc//(addFilters = false)
+//@WebMvcTest(controllers = curvePointController.class)
+@SpringBootTest
+@ExtendWith(SpringExtension.class)
+public class CurvePointControllerTest {
 
+    private final CurvePoint cur = new CurvePoint(10l, 1d, 10d);
     @Autowired
     public MockMvc mockMvc;
-
     @MockBean
-    BidListService bidListService;
+    CurvePointService curvePointService;
 
-    private BidList bidList;
-
-    public static String asJsonString(final Object obj) {
-        try {
-            final ObjectMapper mapper = new ObjectMapper();
-            final String jsonContent = mapper.writeValueAsString(obj);
-            return jsonContent;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Before
-    public void setup() {
-        bidList = new BidList();
+    @Test
+    @WithMockUser
+    public void testcurvePointList() throws Exception {
+        when(curvePointService.findAllCurvePoints()).thenReturn(Collections.singletonList(cur));
+        mockMvc.perform(get("/curvePoint/list").with(csrf().asHeader()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("curvePoint/list"))
+                .andExpect(model().attributeExists("curvePoints"));
     }
 
     @Test
-    public void getBidList() {
-
-        //when(bidListService.findAllBids()).thenReturn(new ArrayList<>());
-        try {
-            mockMvc.perform(
-                            get("http://localhost:8080//bidList/list"))
-                    //.andDo(print())
-                    .andExpect(status().isOk());
-        } catch (Exception e) {
-
-        }
+    @WithMockUser
+    public void addcurvePoint() throws Exception {
+        mockMvc.perform(
+                        get("/curvePoint/add")
+                                .with(csrf().asHeader()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("curvePoint/add"))
+                .andDo(print());
 
     }
 
     @Test
-    public void addBidList() {
+    @WithMockUser
+    void testValidate() throws Exception {
+        mockMvc.perform(post("/curvePoint/validate").with(csrf().asHeader())
+                        .param("idCurve", String.valueOf(11L))
+                        .param("term", String.valueOf(2d))
+                        .param("value", String.valueOf(3d)))
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/curvePoint/list"));
+    }
 
-        try {
-            mockMvc.perform(
-                            get("http://localhost:8080//bidList/add"))
-                    //.andDo(print())
-                    .andExpect(status().isOk());
-        } catch (Exception e) {
 
-        }
+    @Test
+    @WithMockUser
+    public void Error403ValidatecurvePoint() throws Exception {
+        String json = TestFunctions.asJsonString(cur);
+        mockMvc.perform(
+                post("http://localhost:8080/curvePoint/validate")
+                        .content(json)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+
+
+        ).andExpect(status().isForbidden()).andDo(print());
 
     }
 
     @Test
-    public void validateBidList() {
-        String json = asJsonString(bidList);
-        //when(bidListService.saveBid(any(BidList.class))).thenReturn(any(BidList.class));
-        try {
-            mockMvc.perform(
-                    post("http://localhost:8080/bidList/validate")
-                            .content(json)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .accept(MediaType.APPLICATION_JSON)
-
-
-            ).andExpect(status().isOk()).andDo(print());
-        } catch (Exception e) {
-
-        }
-
+    @WithMockUser
+    void testValidateHasError() throws Exception {
+        mockMvc.perform(post("/curvePoint/validate").with(csrf().asHeader())
+                        .param("idCurve", "")
+                        .param("term", String.valueOf(2d))
+                        .param("value", String.valueOf(3d)))
+                .andExpect(status().isOk())
+                .andExpect(view().name("curvePoint/add"))
+                .andExpect(model().hasErrors())
+                .andExpect(model().attributeHasFieldErrorCode("curvePoint", "idCurve", "NotNull"));
     }
 
 
+    @Test
+    @WithMockUser
+    public void curvePointUpdate() throws Exception {
+        when(curvePointService.findCurvePointById(anyLong())).thenReturn(cur);
 
-/*
-    @GetMapping("/bidList/add")
-
-
-    @PostMapping("/bidList/validate")
-
-
-    @GetMapping("/bidList/update/{id}")
-    public String showUpdateForm(@PathVariable("id") Long id, Model model) {
-        // get Bid by Id and to model then show to the form
-        BidList bid = bidListService.findBidById(id);
-        model.addAttribute("bid", bid);
-        return "bidList/update";
+        mockMvc.perform(get("/curvePoint/update/1")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("curvePoint/update"));
     }
 
-    @PostMapping("/bidList/update/{id}")
+    @Test
+    @WithMockUser
+    void testUpdateCurvePoint() throws Exception {
+        when(curvePointService.saveCurvePoint(cur)).thenReturn(cur);
+        mockMvc.perform(post("/curvePoint/update/1").with(csrf().asHeader())
+                        .param("idCurve", String.valueOf(11L))
+                        .param("term", String.valueOf(2d))
+                        .param("value", String.valueOf(3d)))
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/curvePoint/list"))
+                .andExpect(model().hasNoErrors())
+                .andDo(print());
 
+    }
 
-    @GetMapping("/bidList/delete/{id}")*/
+    @Test
+    @WithMockUser
+        //TODO : regarder plus en détail
+    void testUpdateCurvePointHasError() throws Exception {
+        mockMvc.perform(post("/curvePoint/update/1")
+                        .with(csrf().asHeader())
+                        .param("idCurve", "")
+                        .param("term", String.valueOf(2d))
+                        .param("value", String.valueOf(3d)))
+                .andExpect(view().name("redirect:/curvePoint/list"));
 
+    }
+
+    @Test
+    @WithMockUser
+    void testDeleteCurvePoint() throws Exception {
+        when(curvePointService.findCurvePointById(anyLong())).thenReturn(cur);
+        mockMvc.perform(get("/curvePoint/delete/0").with(csrf().asHeader()))
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/curvePoint/list"));
+    }
 
 }

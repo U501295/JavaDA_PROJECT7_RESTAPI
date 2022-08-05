@@ -1,4 +1,4 @@
-package com.nnk.springboot.repository;
+package com.nnk.springboot.TestIT;
 
 import com.nnk.springboot.domain.RuleName;
 import com.nnk.springboot.repositories.RuleNameRepository;

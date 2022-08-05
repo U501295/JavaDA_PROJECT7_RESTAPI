@@ -1,8 +1,6 @@
 package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.RuleName;
-import com.nnk.springboot.domain.RuleName;
-import com.nnk.springboot.services.RatingService;
 import com.nnk.springboot.services.RuleNameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -61,7 +59,7 @@ public class RuleNameController {
                                BindingResult result, Model model) {
         // check required fields, if valid call service to update RuleName and return list RuleName
         if (result.hasErrors()) {
-            return "redirect:ruleName/list";
+            return "redirect:/ruleName/list";
         }
         ruleName.setRuleNameId(id);
         ruleNameService.saveRuleName(ruleName);

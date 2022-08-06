@@ -23,7 +23,7 @@
 			<div class="form-group">
 				<label class="col-sm-2 control-label" for="idCurve">idCurve</label>
 				<div class="col-sm-10">
-					<input class="col-4" id="idCurve" required placeholder="idCurve" th:field="*{idCurve}" type="text">
+					<input class="col-4" id="idCurve" required placeholder="idCurve" th:field="*{idCurve}" type="number" step="1" min="0.0">
 					<p class="text-danger" th:errors="*{idCurve}" th:if="${#fields.hasErrors('idCurve')}"></p>
 				</div>
 			</div>

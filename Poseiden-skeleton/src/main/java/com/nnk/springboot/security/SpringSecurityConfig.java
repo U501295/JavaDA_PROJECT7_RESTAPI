@@ -19,9 +19,6 @@ import javax.sql.DataSource;
  *
  * <p>
  * Couche de sécurité apportée par Spring Security.
- * La configuration a volontairement été laissée générique avec ".permitAll()",
- * ".csrf().disable()" et ".authoritiesByUsernameQuery" pourraient être approfondies
- * si l'industrialisation de la solution est retenue
  * <p>
  */
 @Slf4j
@@ -69,6 +66,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                         "select username,password,'true' as enabled from users where username=?")
                 .authoritiesByUsernameQuery(
                         "select username,role from users where username=?");
+        log.debug("Successful authentication");
 
 
     }

@@ -1,8 +1,8 @@
 package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.Rating;
-import com.nnk.springboot.domain.Rating;
 import com.nnk.springboot.services.RatingService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,17 +15,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.validation.Valid;
 import java.util.List;
 
+
+/**
+ * @author : JULIEN BARONI
+ *
+ * <p>
+ * Controller permettant d'atteindre les URLs en lien avec les entités rating dans l'application.
+ * <p>
+ */
+@Slf4j
 @Controller
 public class RatingController {
-    // TODO: Inject Rating service
     @Autowired
     RatingService ratingService;
 
     @RequestMapping("/rating/list")
-    // call service find all ratings to show to the view
     public String home(Model model) {
         List<Rating> ratingList = ratingService.findAllRatings();
         model.addAttribute("ratinglist", ratingList);
+        log.debug("rating : affichage de la liste");
         return "rating/list";
     }
 
@@ -35,23 +43,19 @@ public class RatingController {
     }
 
     @PostMapping("/rating/validate")
-    // voir si ça crée pas deux objets à la place d'un seul
-    public String validate(@Valid Rating rating, BindingResult result, Model model)
-        // check data valid and save to db, after saving return rating list
-    /*public String validate(@RequestParam("account") String account, @RequestParam("type") String type,
-                           @RequestParam("ratingQuantity") double ratingQuantity, Model model)*/ {
+    public String validate(@Valid Rating rating, BindingResult result, Model model) {
         if (!result.hasErrors()) {
-            //Rating newRating = new Rating(rating.getAccount(), rating.getType(), rating.getRatingQuantity());
             ratingService.saveRating(rating);
             model.addAttribute("ratings", ratingService.findAllRatings());
+            log.debug("rating : erreur dans l'ajout d'un rating");
             return "redirect:/rating/list";
         }
+        log.debug("rating : success dans l'ajout d'un rating");
         return "rating/add";
     }
 
     @GetMapping("/rating/update/{id}")
     public String showUpdateForm(@PathVariable("id") Long id, Model model) {
-        // get Rating by Id and to model then show to the form
         Rating rating = ratingService.findRatingById(id);
         model.addAttribute("rating", rating);
         return "rating/update";
@@ -60,23 +64,23 @@ public class RatingController {
     @PostMapping("/rating/update/{id}")
     public String updateRating(@PathVariable("id") Long id, @Valid Rating rating,
                                BindingResult result, Model model) {
-        // check required fields, if valid call service to update Rating and return list Rating
         if (result.hasErrors()) {
+            log.debug("rating : erreur dans la modification d'un rating");
             return "redirect:rating/list";
         }
         rating.setRatingId(id);
         ratingService.saveRating(rating);
         model.addAttribute("ratings", ratingService.findAllRatings());
-
+        log.debug("rating : success dans la modification d'un rating");
         return "redirect:/rating/list";
     }
 
     @GetMapping("/rating/delete/{id}")
     public String deleteRating(@PathVariable("id") Long id, Model model) {
-        // Find Rating by Id and delete the rating, return to Rating list
         Rating ratingToDelete = ratingService.findRatingById(id);
         ratingService.deleteRating(ratingToDelete.getRatingId());
         model.addAttribute("ratings", ratingService.findAllRatings());
+        log.debug("rating : success dans la suppression d'un rating");
         return "redirect:/rating/list";
     }
 }

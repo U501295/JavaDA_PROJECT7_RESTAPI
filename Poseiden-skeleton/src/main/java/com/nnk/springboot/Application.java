@@ -5,10 +5,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class Application {
-
-    //TODO : gérer les erreurs et faire javadoc et faire validation et faire les docs et regarder requestmapping
-    //TODO : faire les tests du user avec les autorisations user/admin
     //TODO : regarder requestmapping
+    //TODO : externaliser les fichiers de configs
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }

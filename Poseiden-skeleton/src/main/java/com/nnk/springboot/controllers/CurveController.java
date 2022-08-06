@@ -3,6 +3,7 @@ package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.CurvePoint;
 import com.nnk.springboot.services.CurvePointService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,16 +15,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.validation.Valid;
 
+/**
+ * @author : JULIEN BARONI
+ *
+ * <p>
+ * Controller permettant d'atteindre les URLs en lien avec les entités curvePoint dans l'application.
+ * <p>
+ */
+@Slf4j
 @Controller
 public class CurveController {
-    // Inject Curve Point service
     @Autowired
     private CurvePointService curvePointService;
 
     @RequestMapping("/curvePoint/list")
     public String home(Model model) {
-        // find all Curve Point, add to model
         model.addAttribute("curvePoints", curvePointService.findAllCurvePoints());
+        log.debug("curvePoint : affichage de la liste");
         return "curvePoint/list";
     }
 
@@ -34,12 +42,13 @@ public class CurveController {
 
     @PostMapping("/curvePoint/validate")
     public String validate(@Valid CurvePoint curvePoint, BindingResult result, Model model) {
-        // check data valid and save to db, after saving return Curve list
         if (!result.hasErrors()) {
             curvePointService.saveCurvePoint(curvePoint);
             model.addAttribute("curvePoints", curvePointService.findAllCurvePoints());
+            log.debug("curvePoint : erreur dans l'ajout d'un curvePoint");
             return "redirect:/curvePoint/list";
         }
+        log.debug("curvePoint : success dans l'ajout d'un curvePoint");
         return "curvePoint/add";
     }
 
@@ -54,22 +63,24 @@ public class CurveController {
     @PostMapping("/curvePoint/update/{id}")
     public String updateCurve(@PathVariable("id") Long id, @Valid CurvePoint curvePoint,
                               BindingResult result, Model model) {
-        //  check required fields, if valid call service to update Curve and return Curve list
+
         if (result.hasErrors()) {
+            log.debug("curvePoint : erreur dans la modification d'un curvePoint");
             return "redirect:/curvePoint/list";
         }
         curvePoint.setCurveId(id);
         curvePointService.saveCurvePoint(curvePoint);
         model.addAttribute("curvePoints", curvePointService.findAllCurvePoints());
+        log.debug("curvePoint : success dans la modification d'un curvePoint");
         return "redirect:/curvePoint/list";
     }
 
     @GetMapping("/curvePoint/delete/{id}")
     public String deleteCurve(@PathVariable("id") Long id, Model model) {
-        //  Find Curve by Id and delete the Curve, return to Curve list
         CurvePoint curvePointToDelete = curvePointService.findCurvePointById(id);
         curvePointService.deleteCurvePoint(curvePointToDelete.getCurveId());
         model.addAttribute("ratings", curvePointService.findAllCurvePoints());
+        log.debug("curvePoint : success dans la suppression d'un curvePoint");
         return "redirect:/curvePoint/list";
     }
 }

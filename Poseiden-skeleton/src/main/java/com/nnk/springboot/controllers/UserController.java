@@ -3,6 +3,7 @@ package com.nnk.springboot.controllers;
 import com.nnk.springboot.domain.User;
 import com.nnk.springboot.security.SecurityUtils;
 import com.nnk.springboot.services.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -15,6 +16,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.validation.Valid;
 
+/**
+ * @author : JULIEN BARONI
+ *
+ * <p>
+ * Controller permettant d'atteindre les URLs en lien avec les entités user dans l'application.
+ * <p>
+ */
+
+@Slf4j
 @Controller
 public class UserController {
     @Autowired
@@ -24,6 +34,7 @@ public class UserController {
     public String home(Model model) {
         model.addAttribute("users", userService.findAllUsers());
         model.addAttribute("sec", SecurityUtils.isAdminConnected());
+        log.debug("trade : affichage de la liste");
         return "user/list";
     }
 
@@ -39,8 +50,10 @@ public class UserController {
             user.setPassword(encoder.encode(user.getPassword()));
             userService.saveUser(user);
             model.addAttribute("users", userService.findAllUsers());
+            log.debug("trade : erreur lors de l'ajout");
             return "redirect:/user/list";
         }
+        log.debug("trade : succès lors de l'ajout");
         return "user/add";
     }
 
@@ -56,6 +69,7 @@ public class UserController {
     public String updateUser(@PathVariable("id") Long id, @Valid User user,
                              BindingResult result, Model model) {
         if (result.hasErrors()) {
+            log.debug("trade : erreur lors de la modification");
             return "redirect:/user/list";
         }
 
@@ -64,7 +78,7 @@ public class UserController {
         user.setId(id);
         userService.saveUser(user);
         model.addAttribute("users", userService.findAllUsers());
-
+        log.debug("trade : succès lors de la modification");
         return "redirect:/user/list";
     }
 
@@ -73,6 +87,7 @@ public class UserController {
         User user = userService.findUserById(id);
         userService.deleteUser(id);
         model.addAttribute("users", userService.findAllUsers());
+        log.debug("trade : succès lors de la suppression");
         return "redirect:/user/list";
     }
 }

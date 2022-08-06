@@ -23,9 +23,11 @@ public final class SecurityUtils {
         Authentication authentication = securityContext.getAuthentication();
         String authority = authentication.getAuthorities().toString();
         if (authority.contains("ADMIN")) {
+            log.debug("L'utilisateur connecté ne dispose pas des droits d'admin");
             return true;
 
         } else {
+            log.debug("L'utilisateur connecté dispose des droits d'admin");
             return false;
         }
 

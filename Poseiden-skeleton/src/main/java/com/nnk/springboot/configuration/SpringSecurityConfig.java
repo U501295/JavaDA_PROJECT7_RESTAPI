@@ -51,6 +51,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout().logoutSuccessUrl("/login").permitAll().invalidateHttpSession(true)
                 .and()
                 .oauth2Login()
+                .defaultSuccessUrl("/home")
                 .and()
                 .exceptionHandling().accessDeniedPage("/403");
 

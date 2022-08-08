@@ -1,4 +1,4 @@
-package com.nnk.springboot.controller;
+package com.nnk.springboot.controller.front;
 
 import com.nnk.springboot.domain.User;
 import com.nnk.springboot.helper.TestFunctions;

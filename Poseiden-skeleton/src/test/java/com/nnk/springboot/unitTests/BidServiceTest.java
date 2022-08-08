@@ -81,7 +81,7 @@ public class BidServiceTest {
     }
 
     @Test
-    public void should_throwNoSuchElementException_whenDeleteExistingBid() {
+    public void should_throwIllegalArgumentException_whenDeleteNonExistingBid() {
         when(bidListRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         assertThatExceptionOfType(IllegalArgumentException.class)

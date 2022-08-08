@@ -1,4 +1,4 @@
-package com.nnk.springboot.controller;
+package com.nnk.springboot.controller.front;
 
 import com.nnk.springboot.domain.RuleName;
 import com.nnk.springboot.helper.TestFunctions;
@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 //@RunWith(SpringRunner.class)
 @AutoConfigureMockMvc//(addFilters = false)
-//@WebMvcTest(controllers = RuleNameController.class)
+//@WebMvcTest(controllers = RuleNameRestController.class)
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
 public class RuleNameControllerTest {

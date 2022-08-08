@@ -66,11 +66,26 @@ public class UserControllerTest {
         when(userService.saveUser(any(User.class))).thenReturn(user);
         mockMvc.perform(post("/user/validate").with(csrf().asHeader())
                         .param("username", "name")
-                        .param("password", "password")
+                        .param("password", "Password1!")
                         .param("fullname", "full")
                         .param("role", "role"))
                 .andExpect(status().isFound())
                 .andExpect(view().name("redirect:/user/list"));
+    }
+
+    @Test
+    @WithMockUser(username = "admin", authorities = {"ADMIN"})
+    void testValidate_shouldShowErrorMessageWhenWrongpasswordFormat() throws Exception {
+        when(userService.saveUser(any(User.class))).thenReturn(user);
+        mockMvc.perform(post("/user/validate").with(csrf().asHeader())
+                        .param("username", "name")
+                        .param("password", "pass")
+                        .param("fullname", "full")
+                        .param("role", "role"))
+                .andExpect(status().isOk())
+                .andExpect(model().hasErrors())
+                .andExpect(model().attributeHasFieldErrorCode("user", "password", "ValidPassword"))
+                .andExpect(view().name("user/add"));
     }
 
 

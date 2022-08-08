@@ -33,12 +33,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         http
                 .csrf()
-                //.ignoringAntMatchers("/api/**")
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 .and()
                 .authorizeRequests()
-                //.antMatchers("/api/**").permitAll()
-                //.antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/user/add/**").hasAuthority("ADMIN")
                 .antMatchers("/user/validate/**").hasAuthority("ADMIN")
                 .antMatchers("/user/delete/**").hasAuthority("ADMIN")

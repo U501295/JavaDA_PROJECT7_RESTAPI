@@ -13,7 +13,7 @@ import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class RatingServiceTest {
+public class RatingServiceIT {
 
     @Autowired
     private RatingService ratingService;

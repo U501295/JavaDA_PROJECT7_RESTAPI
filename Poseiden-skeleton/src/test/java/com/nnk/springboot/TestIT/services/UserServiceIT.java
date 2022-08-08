@@ -13,14 +13,14 @@ import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class UserServiceTest {
+public class UserServiceIT {
 
     @Autowired
     private UserService userService;
 
     @Test(expected = IllegalArgumentException.class)
     public void userTest() {
-        User user = new User("username", "password", "fullname", "role");
+        User user = new User("username", "Password1!", "fullname", "role");
 
         // Save
         user = userService.saveUser(user);

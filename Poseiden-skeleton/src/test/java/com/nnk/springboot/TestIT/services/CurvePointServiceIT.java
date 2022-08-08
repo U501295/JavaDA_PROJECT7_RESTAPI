@@ -13,7 +13,7 @@ import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class CurvePointServiceTest {
+public class CurvePointServiceIT {
 
     @Autowired
     private CurvePointService curvePointService;

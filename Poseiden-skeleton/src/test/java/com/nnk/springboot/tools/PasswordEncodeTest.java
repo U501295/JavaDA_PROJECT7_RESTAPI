@@ -24,8 +24,8 @@ public class PasswordEncodeTest {
 
     @Test
     public void testPassword() {
-        String pw = passwordEncoder.encode("admin");
-        //System.out.println("[ " + pw + " ]");
+        String pw = passwordEncoder.encode("Useruser1!");
+        System.out.println("[ " + pw + " ]");
         Assertions.assertThat(pw).isNotEqualTo("admin");
 
     }

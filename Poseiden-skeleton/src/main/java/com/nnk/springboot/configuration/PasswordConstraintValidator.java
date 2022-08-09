@@ -7,6 +7,14 @@ import javax.validation.ConstraintValidatorContext;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * @author : JULIEN BARONI
+ *
+ * <p>
+ * Utilitaire permettant de valider les critères d'acceptation de l'utilisateur
+ * lors de la création/modification de son mot de passe.
+ * <p>
+ */
 public class PasswordConstraintValidator implements ConstraintValidator<ValidPassword, String> {
     @Override
     public void initialize(ValidPassword arg0) {

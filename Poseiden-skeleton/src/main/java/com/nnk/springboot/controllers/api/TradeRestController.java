@@ -14,6 +14,13 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * @author : JULIEN BARONI
+ *
+ * <p>
+ * Controller permettant d'atteindre les URLs en lien avec les entités trade dans l'API.
+ * <p>
+ */
 @Slf4j
 @RestController
 @RequestMapping("/api/trade")

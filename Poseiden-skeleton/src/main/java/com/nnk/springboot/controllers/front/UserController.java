@@ -29,7 +29,7 @@ public class UserController {
     ConstraintValidatorContext context;
     @Autowired
     private UserService userService;
-    
+
     private PasswordConstraintValidator passwordConstraintValidator;
 
     @RequestMapping("/user/list")
@@ -77,8 +77,7 @@ public class UserController {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         user.setPassword(encoder.encode(user.getPassword()));
         user.setId(id);
-        boolean valid = passwordConstraintValidator.isValid(user.getPassword(), context);
-        User userModified = userService.saveUser(user);
+        userService.saveUser(user);
         model.addAttribute("users", userService.findAllUsers());
         log.debug("user : succès lors de la modification");
         return "redirect:/user/list";

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,7 +55,8 @@ public class UserRestController {
             log.error(logAndBodyMessage);
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(logAndBodyMessage);
         }
-
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        userEntity.setPassword(encoder.encode(userEntity.getPassword()));
         User userEntitySaved = userService.saveUser(userEntity);
         log.debug("successfully post user");
         return ResponseEntity.status(HttpStatus.CREATED).body(userEntitySaved);
@@ -75,6 +77,8 @@ public class UserRestController {
         }
 
         try {
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            userEntity.setPassword(encoder.encode(userEntity.getPassword()));
             User userEntityToModify = userService.findUserById(id);
             userEntityToModify = userEntity;
             userEntityToModify.setId(id);

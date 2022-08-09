@@ -127,7 +127,6 @@ public class BidListControllerTest {
 
     @Test
     @WithMockUser
-        //TODO : regarder plus en détail
     void testUpdateBidHasError() throws Exception {
         mockMvc.perform(post("/bidList/update/1")
                         .with(csrf().asHeader())

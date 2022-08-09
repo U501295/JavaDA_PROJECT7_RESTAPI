@@ -138,7 +138,6 @@ public class RuleNameControllerTest {
 
     @Test
     @WithMockUser
-        //TODO : regarder plus en détail
     void testUpdateRuleNameHasError() throws Exception {
         mockMvc.perform(post("/ruleName/update/1")
                         .with(csrf().asHeader())

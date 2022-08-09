@@ -146,7 +146,6 @@ public class UserControllerTest {
 
     @Test
     @WithMockUser(username = "admin", authorities = {"ADMIN"})
-        //TODO : regarder plus en détail
     void testUpdateUserHasError() throws Exception {
         when(userService.saveUser(user)).thenReturn(user);
         mockMvc.perform(post("/user/update/2")

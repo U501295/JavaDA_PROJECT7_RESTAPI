@@ -127,7 +127,6 @@ public class TradeControllerTest {
 
     @Test
     @WithMockUser
-        //TODO : regarder plus en détail
     void testUpdateTradeHasError() throws Exception {
         mockMvc.perform(post("/trade/update/1")
                         .with(csrf().asHeader())

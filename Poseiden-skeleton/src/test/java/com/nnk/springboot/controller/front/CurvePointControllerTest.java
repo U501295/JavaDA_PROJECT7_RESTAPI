@@ -128,7 +128,6 @@ public class CurvePointControllerTest {
 
     @Test
     @WithMockUser
-        //TODO : regarder plus en détail
     void testUpdateCurvePointHasError() throws Exception {
         mockMvc.perform(post("/curvePoint/update/1")
                         .with(csrf().asHeader())

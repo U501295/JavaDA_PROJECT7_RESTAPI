@@ -131,7 +131,6 @@ public class RatingControllerTest {
 
     @Test
     @WithMockUser
-        //TODO : regarder plus en détail
     void testUpdateRatingHasError() throws Exception {
         mockMvc.perform(post("/rating/update/1")
                         .with(csrf().asHeader())

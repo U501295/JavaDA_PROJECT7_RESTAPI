@@ -1,7 +1,6 @@
 package com.nnk.springboot.controller.front;
 
 import com.nnk.springboot.domain.User;
-import com.nnk.springboot.helper.TestFunctions;
 import com.nnk.springboot.services.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -88,22 +86,6 @@ public class UserControllerTest {
                 .andExpect(view().name("user/add"));
     }
 
-
-    @Test
-    @WithMockUser
-    public void Error403ValidateUserList() throws Exception {
-        String json = TestFunctions.asJsonString(user);
-        mockMvc.perform(
-                post("http://localhost:8080/user/validate")
-                        .content(json)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-
-
-        ).andExpect(status().isForbidden()).andDo(print());
-
-    }
-
     @Test
     @WithMockUser(username = "admin", authorities = {"ADMIN"})
     void testValidateHasError() throws Exception {
@@ -116,6 +98,17 @@ public class UserControllerTest {
                 .andExpect(view().name("user/add"))
                 .andExpect(model().hasErrors())
                 .andExpect(model().attributeHasFieldErrorCode("user", "username", "NotBlank"));
+    }
+
+    @Test
+    @WithMockUser(username = "admin", authorities = {"USER"})
+    void testValidateHasError_whenUserTriesToCreateANewUser() throws Exception {
+        mockMvc.perform(post("/user/validate").with(csrf().asHeader())
+                        .param("username", "user")
+                        .param("password", "Password1!")
+                        .param("fullname", "full")
+                        .param("role", "role"))
+                .andExpect(status().isForbidden());
     }
 
 
